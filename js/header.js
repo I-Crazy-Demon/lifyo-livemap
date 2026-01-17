@@ -496,17 +496,18 @@ renderWeatherCalendar: function() {
             displayStatus = 'winter';
         }
         
-        // Формируем tooltip
-        var tooltipText = day + ' ' + monthNamesGen[month-1] + ' ' + year + '\n';
-        tooltipText += 'Погода: ' + (weatherNames[info.weather] || 'Неизвестно') + '\n';
-        tooltipText += 'Статус: ' + (statusNames[displayStatus] || statusNames['null']);
+        // Формируем tooltip с HTML
+        var tooltipHtml = '<strong>' + day + ' ' + monthNamesGen[month-1] + ' ' + year + '</strong><br>';
+        tooltipHtml += '<strong>Погода:</strong> ' + (weatherNames[info.weather] || 'Неизвестно') + '<br>';
+        tooltipHtml += '<strong>Статус:</strong> ' + (statusNames[displayStatus] || statusNames['null']);
         
         var isCurrentDay = (self.weatherCalendar.currentYear === year && 
                             self.weatherCalendar.currentMonth === month && 
                             self.weatherCalendar.currentDay === day);
         
+        // Добавляем data-tooltip атрибут вместо title
         html += '<td class="calendar-day' + (isCurrentDay ? ' current-day' : '') + 
-                '" title="' + tooltipText + '">';
+                '" data-tooltip="' + tooltipHtml.replace(/"/g, '&quot;') + '">';
         html += '<div class="day-number">' + day + '</div>';
         html += '<div class="day-icons">';
         
@@ -543,8 +544,11 @@ renderWeatherCalendar: function() {
     html += '</tr></tbody></table>';
     $('#calendar-body').html(html);
     
-    // Инициализация tooltips для ячеек календаря
+    // Инициализация tooltips для ячеек календаря с HTML контентом
     $('.calendar-day').tooltip({
+        content: function() {
+            return $(this).attr('data-tooltip');
+        },
         track: true,
         classes: {
             "ui-tooltip": "ui-corner-all ui-widget-shadow calendar-tooltip"
@@ -572,6 +576,7 @@ renderWeatherCalendar: function() {
 	
 
 };
+
 
 
 
