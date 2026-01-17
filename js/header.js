@@ -60,6 +60,7 @@ setPlantingStatus: function(date) {
 	
 	// Header section shortcuts and tooltips initialization
 	init: function( controller ) {
+		this.loadPlantingCalendar();
 		this.controller = controller;
 		this.initBar().initDialogs().initMenu();
 		if( controller.config.restarts !== "" ) {
@@ -226,6 +227,7 @@ setPlantingStatus: function(date) {
 		tooltipContent    += Locale.ui[3] + ": " + progression + "<br>";
 		tooltipContent    += Locale.ui[4] + ": " + timerString;
 		this.gametimeItem.addClass("has-tooltip").tooltip( "option", { content: tooltipContent, disabled: false } );
+		this.setPlantingStatus(date);
 		return this;
 	},
 	
@@ -368,3 +370,4 @@ setPlantingStatus: function(date) {
 	
 
 };
+
