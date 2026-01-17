@@ -468,7 +468,7 @@ for(var day = 1; day <= numDays; day++) {
     
     if (year % 4 === 0 && month > 2) {
         // Високосный год, после февраля - сдвигаем на день назад
-        adjustedDay = day - 1;
+        adjustedDay = day + 1;
         if (adjustedDay < 1) {
             adjustedMonth = month - 1;
             var prevMonthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -545,6 +545,7 @@ for(var day = 1; day <= numDays; day++) {
 	
 
 };
+
 
 
 
