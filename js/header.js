@@ -452,41 +452,70 @@ setPlantingStatus: function(date) {
 			html += '<td></td>';
 		}
 		
-		// Add days of month
-		var dayOfWeek = firstDay;
-		for(var day = 1; day <= numDays; day++) {
-			var info = self.getPlantingStatus(month, day);
-			if(!info) info = {status: 'null', weather: 'fair'};
+// Add days of month
+var dayOfWeek = firstDay;
+for(var day = 1; day <= numDays; day++) {
+    var info = self.getPlantingStatus(month, day);
+    
+    // Map weather values to available icons
+    var weatherMap = {'fair': 'sunny', 'snowy': 'snowy', 'cloudy': 'cloudy', 'shower': 'rainy'};
+    
+    // ИСПРАВЛЕНИЕ ВИСОКОСНОГО ГОДА:
+    // calendar.json создан для невисокосного года (365 дней)
+    // В високосном году после февраля нужно запрашивать данные на день раньше
+    var adjustedMonth = month;
+    var adjustedDay = day;
+    
+    if (year % 4 === 0 && month > 2) {
+        // Високосный год, после февраля - сдвигаем на день назад
+        adjustedDay = day - 1;
+        if (adjustedDay < 1) {
+            adjustedMonth = month - 1;
+            var prevMonthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            adjustedDay = prevMonthDays[adjustedMonth - 1];
+        }
+    }
+    
+    var info = self.getPlantingStatus(adjustedMonth, adjustedDay);
+    if(!info) info = {status: 'null', weather: 'fair'};
+    
+    if(info.weather && weatherMap[info.weather]) {
+        info.weather = weatherMap[info.weather];
+    }
+    
+    // Определяем, является ли день текущим
+    var isCurrentDay = (self.weatherCalendar.currentYear === year && 
+                        self.weatherCalendar.currentMonth === month && 
+                        self.weatherCalendar.currentDay === day);
+    
+    html += '<td class="calendar-day' + (isCurrentDay ? ' current-day' : '') + '">';
+    html += '<div class="day-number">' + day + '</div>';
+    html += '<div class="day-icons">';
+    
+    // Add weather icon
+    if(self.plantingCalendar && self.plantingCalendar.meta.icons.weather[info.weather]) {
+        html += '<img src="' + self.plantingCalendar.meta.icons.weather[info.weather] + '" alt="' + info.weather + '" class="weather-icon-small">';
+    }
+    
+    // Add status icon - ИСПРАВЛЕНИЕ ДЛЯ ЗИМЫ
+    // Для зимних месяцев (12, 1, 2) с status: null показываем winter иконку
+    var isWinterMonth = (month === 12 || month === 1 || month === 2);
+    if(info.status === 'null' && isWinterMonth && self.plantingCalendar && self.plantingCalendar.meta.icons.status['winter']) {
+        html += '<img src="' + self.plantingCalendar.meta.icons.status['winter'] + '" alt="winter" class="planting-icon-small">';
+    } else if(info.status !== 'null' && self.plantingCalendar && self.plantingCalendar.meta.icons.status[info.status]) {
+        html += '<img src="' + self.plantingCalendar.meta.icons.status[info.status] + '" alt="' + info.status + '" class="planting-icon-small">';
+    }
+    
+    html += '</div>';
+    html += '</td>';
+    
+    // New row after Sunday
+    if(dayOfWeek % 7 === 0 && day < numDays) {
+        html += '</tr><tr>';
+    }
+    dayOfWeek++;
+}
 
-			// Map weather values to available icons
-				var weatherMap = {'fair': 'sunny', 'snowy': 'snowy', 'cloudy': 'cloudy', 'shower': 'rainy'};
-				if(info.weather && weatherMap[info.weather]) {
-    			info.weather = weatherMap[info.weather];
-				}
-			
-			html += '<td class="calendar-day">';
-			html += '<div class="day-number">' + day + '</div>';
-			html += '<div class="day-icons">';
-			
-			// Add weather icon
-			if(self.plantingCalendar && self.plantingCalendar.meta.icons.weather[info.weather]) {
-				html += '<img src="' + self.plantingCalendar.meta.icons.weather[info.weather] + '" class="planting-icon-small" title="' + info.weather + '">';
-			}
-			
-			// Add status icon
-			if(info.status !== 'null' && self.plantingCalendar && self.plantingCalendar.meta.icons.status[info.status]) {
-				html += '<img src="' + self.plantingCalendar.meta.icons.status[info.status] + '" class="planting-icon-small" title="' + info.status + '">';
-			}
-			
-			html += '</div></td>';
-			
-			// New row after Sunday
-			if(dayOfWeek % 7 === 0 && day < numDays) {
-				html += '</tr><tr>';
-			}
-			dayOfWeek++;
-		}
-		
 		// Fill remaining cells
 		while(dayOfWeek % 7 !== 1) {
 			html += '<td></td>';
@@ -516,6 +545,7 @@ setPlantingStatus: function(date) {
 	
 
 };
+
 
 
 
