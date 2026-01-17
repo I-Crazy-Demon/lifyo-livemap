@@ -845,10 +845,11 @@ fieldset {
     width: auto !important;        /* ДОБАВЛЕНО */
     max-width: none !important;    /* ДОБАВЛЕНО: отключает ограничение ширины */
 	white-space: nowrap;
-	word-break: keep-all;
+/*	word-break: keep-all; */
 }
 
 .calendar-day {
     cursor: pointer;
 }
+
 
