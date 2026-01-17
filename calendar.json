@@ -18,10 +18,10 @@
         "winter": "images/icons/plant_winter.png"
       },
       "weather": {
-        "sunny": "images/icons/weather_sunny.png",
-        "cloudy": "images/icons/weather_cloudy.png",
-        "rainy": "images/icons/weather_rainy.png",
-		        "snowy": "images/icons/weather_snowy.png"
+        "sunny": "images/weather/Fair.png",
+        "cloudy": "images/weather/Cloudy.png",
+        "rainy": "images/weather/Shower.png",
+        "snowy": "images/weather/Snowy.png"
       }
     }
   },
