@@ -823,8 +823,14 @@ fieldset {
 
 .current-day {
     background-color: #4a4a00 !important;
+    border: 2px solid #ffff00 !important;
     font-weight: bold;
 }
+
+.current-day .day-number {
+    color: #ffff00 !important;
+}
+
 
 
 
