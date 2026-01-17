@@ -52,6 +52,12 @@ setPlantingStatus: function(date) {
     
     span.innerHTML = statusTexts[info.status] || statusTexts['null'];
     span.className = 'planting-status-' + info.status;
+
+	        // Активировать tooltip с полным текстом статуса
+        this.plantingItem.addClass("has-tooltip").tooltip("option", { 
+            content: statusTexts[info.status] || statusTexts['null'], 
+            disabled: false 
+        });
     
     return this;
 },
@@ -89,6 +95,12 @@ setPlantingStatus: function(date) {
 			hide: false,
 			disabled: true 
 		} );
+		        this.plantingItem = $("#header-planting").tooltip( {
+            items: "#header-planting",
+            classes: {"ui-tooltip": "ui-corner-all ui-widget-shadow header-tooltip"},
+            hide: false,
+            disabled: true
+        } );
 		this.restartsItem = $("#header-restarts").tooltip( {
 			items: "#header-restarts",
 			classes: {"ui-tooltip": "ui-corner-all ui-widget-shadow header-tooltip"},
@@ -370,4 +382,5 @@ setPlantingStatus: function(date) {
 	
 
 };
+
 
