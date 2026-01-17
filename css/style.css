@@ -839,7 +839,8 @@ fieldset {
     border: 1px solid #555 !important;
     font-size: 13px !important;
     padding: 8px 12px !important;
-    white-space: pre-line !important;
+/*    white-space: pre-line !important; */
+	white-space: preserve nowrap !important;
     min-width: 200px !important;  /* ИЗМЕНЕНО: min-width вместо max-width */
     width: auto !important;        /* ДОБАВЛЕНО */
     max-width: none !important;    /* ДОБАВЛЕНО: отключает ограничение ширины */
@@ -848,6 +849,7 @@ fieldset {
 .calendar-day {
     cursor: pointer;
 }
+
 
 
 
