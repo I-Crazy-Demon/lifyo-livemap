@@ -1,4 +1,60 @@
 var NyuLivemapHeader = {
+
+plantingCalendar: null,
+
+loadPlantingCalendar: function() {
+    var self = this;
+    fetch('calendar.json')
+        .then(r => r.json())
+        .then(data => { 
+            self.plantingCalendar = data;
+        })
+        .catch(err => console.error('Ошибка загрузки calendar.json:', err));
+    return this;
+},
+
+getPlantingStatus: function(month, day) {
+    if (!this.plantingCalendar || !this.plantingCalendar.months) return null;
+    
+    var m = String(month);
+    var d = String(day);
+    
+    if (!this.plantingCalendar.months[m] || !this.plantingCalendar.months[m][d]) {
+        return null;
+    }
+    
+    return this.plantingCalendar.months[m][d];
+},
+
+setPlantingStatus: function(date) {
+    if (!this.plantingCalendar) return this;
+    
+    var month = date.getUTCMonth() + 1;
+    var day = date.getUTCDate();
+    var info = this.getPlantingStatus(month, day);
+    
+    if (!info || !info.status) return this;
+    
+    var statusTexts = {
+        'good': 'Благоприятный день для посадок',
+        'bad': 'Неблагоприятный день для посадок',
+        'maybe': 'Спорный день для посадок',
+        'winter': 'Зимний период',
+        'null': 'День не определён'
+    };
+    
+    var icon = document.getElementById('h-planting-icon');
+    var span = document.getElementById('planting-status');
+    
+    if (this.plantingCalendar.meta.icons.status[info.status]) {
+        icon.src = this.plantingCalendar.meta.icons.status[info.status];
+    }
+    
+    span.innerHTML = statusTexts[info.status] || statusTexts['null'];
+    span.className = 'planting-status-' + info.status;
+    
+    return this;
+},
 	
 	controller: null,
 	
@@ -310,4 +366,5 @@ var NyuLivemapHeader = {
 		return this;
 	},
 	
+
 };
