@@ -20,7 +20,8 @@
       "weather": {
         "sunny": "images/icons/weather_sunny.png",
         "cloudy": "images/icons/weather_cloudy.png",
-        "rainy": "images/icons/weather_rainy.png"
+        "rainy": "images/icons/weather_rainy.png",
+		        "snowy": "images/icons/weather_snowy.png"
       }
     }
   },
