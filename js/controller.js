@@ -171,7 +171,8 @@ function NyuLivemapController() {
 			self.hasPrivilege('struct_layer') && livemap.getLayer('buildings').addControl("images/control/buildings.png", Locale.ui[110]);
 			self.hasPrivilege('trees_layer')  && livemap.getLayer('trees').addControl("images/control/trees.png", Locale.ui[118]);
 					// Weather Calendar Button
-		livemap.addControl("images/calendar.png
+		livemap.addControl("images/calendar.png", "Календарь погоды", function() { self.header.openWeatherCalendar(); });
+
 			
 		} );
 		
@@ -388,4 +389,5 @@ Number.prototype.pad = function(size) {
 	return s;
 
 }
+
 
