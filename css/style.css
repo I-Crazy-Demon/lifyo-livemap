@@ -833,6 +833,7 @@ fieldset {
 
 
 /* Tooltip для календаря */
+/* Tooltip для календаря */
 .calendar-tooltip {
     background-color: #2b2b2b !important;
     color: #e0e0e0 !important;
@@ -840,14 +841,11 @@ fieldset {
     font-size: 13px !important;
     padding: 8px 12px !important;
     white-space: pre-line !important;
-    max-width: 300px !important;
+    min-width: 200px !important;  /* ИЗМЕНЕНО: min-width вместо max-width */
+    width: auto !important;        /* ДОБАВЛЕНО */
+    max-width: none !important;    /* ДОБАВЛЕНО: отключает ограничение ширины */
 }
 
 .calendar-day {
     cursor: pointer;
 }
-
-
-
-
-
