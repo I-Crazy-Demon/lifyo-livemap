@@ -384,8 +384,9 @@ setPlantingStatus: function(date) {
 		this.jhItem.addClass("has-tooltip").tooltip( "option", { content: content, disabled: false } );
 		return this;
 	},
-
-	// Weather Calendar
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+	// Weather Calendar                                                                            //
+	/////////////////////////////////////////////////////////////////////////////////////////////////
     weatherCalendar: {year: 1060, month: 1},
 	initWeatherCalendar: function() {
 		var self = this;
@@ -499,7 +500,7 @@ for(var day = 1; day <= numDays; day++) {
     
     // Add status icon - ИСПРАВЛЕНИЕ ДЛЯ ЗИМЫ
     // Для зимних месяцев (12, 1, 2) с status: null показываем winter иконку
-    var isWinterMonth = (month === 12 || month === 1 || month === 2);
+    var isWinterMonth = (month === 11 || month === 12 || month === 1 || month === 2);
     if(info.status === 'null' && isWinterMonth && self.plantingCalendar && self.plantingCalendar.meta.icons.status['winter']) {
         html += '<img src="' + self.plantingCalendar.meta.icons.status['winter'] + '" alt="winter" class="planting-icon-small">';
     } else if(info.status !== 'null' && self.plantingCalendar && self.plantingCalendar.meta.icons.status[info.status]) {
@@ -545,6 +546,7 @@ for(var day = 1; day <= numDays; day++) {
 	
 
 };
+
 
 
 
