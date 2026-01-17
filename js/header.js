@@ -386,7 +386,7 @@ setPlantingStatus: function(date) {
 	},
 
 	// Weather Calendar
-//	    weatherCalendar: {year: 1060, month: 1},
+    weatherCalendar: {year: 1060, month: 1},
 	initWeatherCalendar: function() {
 		var self = this;
 		// Initialize dialog
@@ -459,7 +459,7 @@ setPlantingStatus: function(date) {
 			if(!info) info = {status: 'null', weather: 'fair'};
 
 			// Map weather values to available icons
-				var weatherMap = {'fair': 'sunny', 'snowy': 'cloudy'};
+				var weatherMap = {'fair': 'sunny', 'snowy': 'snowy', 'cloudy': 'cloudy', 'shower': 'rainy'};
 				if(info.weather && weatherMap[info.weather]) {
     			info.weather = weatherMap[info.weather];
 				}
@@ -516,6 +516,7 @@ setPlantingStatus: function(date) {
 	
 
 };
+
 
 
 
