@@ -386,7 +386,7 @@ setPlantingStatus: function(date) {
 	},
 
 	// Weather Calendar
-	    weatherCalendar: {year: 1060, month: 1},
+//	    weatherCalendar: {year: 1060, month: 1},
 	initWeatherCalendar: function() {
 		var self = this;
 		// Initialize dialog
@@ -516,6 +516,7 @@ setPlantingStatus: function(date) {
 	
 
 };
+
 
 
 
