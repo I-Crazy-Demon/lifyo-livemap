@@ -633,7 +633,7 @@ calculateHarvestCycles: function(startMonth, startDay, startYear) {
         adjustedMonth = currentMonth;
         adjustedDay = currentDay;
         if (currentYear % 4 === 0 && currentMonth > 2) {
-            adjustedDay = currentDay - 1;
+            adjustedDay = currentDay + 1;
             if (adjustedDay < 1) {
                 adjustedMonth = currentMonth - 1;
                 adjustedDay = daysInMonth[adjustedMonth - 1];
@@ -700,3 +700,4 @@ calculateHarvestCycles: function(startMonth, startDay, startYear) {
 	
 
 };
+
