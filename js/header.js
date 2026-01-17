@@ -501,19 +501,6 @@ renderWeatherCalendar: function() {
         tooltipText += (weatherNames[info.weather] || 'Неизвестно') + '\n';
         tooltipText += (statusNames[displayStatus] || statusNames['null']);
 
-// ДОБАВЛЯЕМ ПРОГНОЗ УРОЖАЯ для статуса "good"
-// Добавляем прогноз урожая для благоприятных дней
-if (info.status === 'good') {
-    var harvestForecast = self.calculateHarvestCycles(month, day, year);
-    if (harvestForecast && harvestForecast.harvest) {
-        tooltipText += '\n\n--- Прогноз урожая ---';
-        tooltipText += '\nСозревание: ' + harvestForecast.harvest.text;
-        if (harvestForecast.expiry) {
-            tooltipText += '\nПропадёт: ' + harvestForecast.expiry.text;
-        }
-    }
-}		
-		
         var isCurrentDay = (self.weatherCalendar.currentYear === year && 
                             self.weatherCalendar.currentMonth === month && 
                             self.weatherCalendar.currentDay === day);
@@ -572,115 +559,6 @@ $('.calendar-day').tooltip({
     }
 });
 },
-
-
-
-// Функция для расчёта циклов роста урожая
-calculateHarvestCycles: function(startMonth, startDay, startYear) {
-    var self = this;
-    var cycles = 0;
-    var currentMonth = startMonth;
-    var currentDay = startDay;
-    var currentYear = startYear;
-    
-    var monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
-                     'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-    var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    
-    // Получаем погоду стартового дня
-    var adjustedMonth = currentMonth;
-    var adjustedDay = currentDay;
-    if (currentYear % 4 === 0 && currentMonth > 2) {
-        adjustedDay = currentDay - 1;
-        if (adjustedDay < 1) {
-            adjustedMonth = currentMonth - 1;
-            adjustedDay = daysInMonth[adjustedMonth - 1];
-        }
-    }
-    
-    var prevInfo = self.getPlantingStatus(adjustedMonth, adjustedDay);
-    if (!prevInfo || !prevInfo.weather) return null;
-    
-    var weatherMap = {'fair': 'sunny', 'snowy': 'snowy', 'cloudy': 'cloudy', 'shower': 'rainy'};
-    var prevWeather = weatherMap[prevInfo.weather] || prevInfo.weather;
-    var prevIsSunny = (prevWeather === 'sunny');
-    
-    var harvestDate = null;
-    var expiryDate = null;
-    var maxIterations = 365 * 2; // Защита от бесконечного цикла
-    var iterations = 0;
-    
-    while (cycles < 11 && iterations < maxIterations) { // 8 циклов роста + 3 цикла сбора
-        iterations++;
-        
-        // Переходим к следующему дню
-        currentDay++;
-        var currentDaysInMonth = daysInMonth[currentMonth - 1];
-        if (currentYear % 4 === 0 && currentMonth === 2) {
-            currentDaysInMonth = 29;
-        }
-        
-        if (currentDay > currentDaysInMonth) {
-            currentDay = 1;
-            currentMonth++;
-            if (currentMonth > 12) {
-                currentMonth = 1;
-                currentYear++;
-            }
-        }
-        
-        // Получаем погоду текущего дня с учётом високосного года
-        adjustedMonth = currentMonth;
-        adjustedDay = currentDay;
-        if (currentYear % 4 === 0 && currentMonth > 2) {
-            adjustedDay = currentDay + 1;
-            if (adjustedDay < 1) {
-                adjustedMonth = currentMonth - 1;
-                adjustedDay = daysInMonth[adjustedMonth - 1];
-            }
-        }
-        
-        var currentInfo = self.getPlantingStatus(adjustedMonth, adjustedDay);
-        if (!currentInfo || !currentInfo.weather) continue;
-        
-        var currentWeather = weatherMap[currentInfo.weather] || currentInfo.weather;
-        var currentIsSunny = (currentWeather === 'sunny');
-        
-        // Проверяем смену погоды (цикл)
-        // Цикл = смена НА солнечно ИЛИ С солнечно
-        // НО НЕ солнце → солнце
-        if (prevIsSunny !== currentIsSunny) {
-            cycles++;
-            
-            if (cycles === 8) {
-                // Урожай созрел
-                harvestDate = {
-                    day: currentDay,
-                    month: currentMonth,
-                    year: currentYear,
-                    text: currentDay + ' ' + monthNames[currentMonth - 1] + ' ' + currentYear
-                };
-            } else if (cycles === 11) {
-                // Урожай пропадёт (4-й цикл после созревания)
-                expiryDate = {
-                    day: currentDay,
-                    month: currentMonth,
-                    year: currentYear,
-                    text: currentDay + ' ' + monthNames[currentMonth - 1] + ' ' + currentYear
-                };
-                break;
-            }
-        }
-        
-        prevIsSunny = currentIsSunny;
-    }
-    
-    return {
-        harvest: harvestDate,
-        expiry: expiryDate
-    };
-},
-	
 		
 	openWeatherCalendar: function() {
 		var self = this;
@@ -700,4 +578,5 @@ calculateHarvestCycles: function(startMonth, startDay, startYear) {
 	
 
 };
+
 
