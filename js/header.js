@@ -385,9 +385,8 @@ setPlantingStatus: function(date) {
 		return this;
 	},
 
-		// Weather Calendar
-	weatherCalendar: {year: 1060, month: 1},
-	
+	// Weather Calendar
+	    weatherCalendar: {year: 1060, month: 1},
 	initWeatherCalendar: function() {
 		var self = this;
 		// Initialize dialog
@@ -458,6 +457,12 @@ setPlantingStatus: function(date) {
 		for(var day = 1; day <= numDays; day++) {
 			var info = self.getPlantingStatus(month, day);
 			if(!info) info = {status: 'null', weather: 'fair'};
+
+			// Map weather values to available icons
+				var weatherMap = {'fair': 'sunny', 'snowy': 'cloudy'};
+				if(info.weather && weatherMap[info.weather]) {
+    			info.weather = weatherMap[info.weather];
+				}
 			
 			html += '<td class="calendar-day">';
 			html += '<div class="day-number">' + day + '</div>';
@@ -496,9 +501,14 @@ setPlantingStatus: function(date) {
 	openWeatherCalendar: function() {
 		var self = this;
 		// Set to current game date if available
-		if(self.gameTime && self.gameTime.month) {
-			self.weatherCalendar.month = parseInt(self.gameTime.month);
-			self.weatherCalendar.year = parseInt(self.gameTime.year) || 1060;
+		// Get current game date from controller
+		if(self.controller && self.controller.dayOfYear) {
+    		var gameDate = self.controller.getGameDateTime(self.controller.config.daycycle);
+    		self.weatherCalendar.month = gameDate.getUTCMonth() + 1;
+    		self.weatherCalendar.year = gameDate.getUTCFullYear() - 1000;
+    		self.weatherCalendar.currentMonth = self.weatherCalendar.month;
+    		self.weatherCalendar.currentDay = gameDate.getUTCDate();
+    		self.weatherCalendar.currentYear = self.weatherCalendar.year;
 		}
 		self.renderWeatherCalendar();
 		self.weatherCalendarDialog.dialog('open');
@@ -506,6 +516,7 @@ setPlantingStatus: function(date) {
 	
 
 };
+
 
 
 
