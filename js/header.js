@@ -472,7 +472,7 @@ renderWeatherCalendar: function() {
         var adjustedDay = day;
         
         if (year % 4 === 0 && month > 2) {
-            adjustedDay = day + 1;
+            adjustedDay = day - 1;
             if (adjustedDay < 1) {
                 adjustedMonth = month - 1;
                 var prevMonthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -496,7 +496,7 @@ renderWeatherCalendar: function() {
             displayStatus = 'winter';
         }
         
-        // Формируем tooltip с HTML
+        // Формируем tooltip с HTML переносами
         var tooltipHtml = '<strong>' + day + ' ' + monthNamesGen[month-1] + ' ' + year + '</strong><br>';
         tooltipHtml += '<strong>Погода:</strong> ' + (weatherNames[info.weather] || 'Неизвестно') + '<br>';
         tooltipHtml += '<strong>Статус:</strong> ' + (statusNames[displayStatus] || statusNames['null']);
@@ -505,7 +505,6 @@ renderWeatherCalendar: function() {
                             self.weatherCalendar.currentMonth === month && 
                             self.weatherCalendar.currentDay === day);
         
-        // Добавляем data-tooltip атрибут вместо title
         html += '<td class="calendar-day' + (isCurrentDay ? ' current-day' : '') + 
                 '" data-tooltip="' + tooltipHtml.replace(/"/g, '&quot;') + '">';
         html += '<div class="day-number">' + day + '</div>';
@@ -576,6 +575,7 @@ renderWeatherCalendar: function() {
 	
 
 };
+
 
 
 
