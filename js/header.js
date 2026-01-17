@@ -547,10 +547,13 @@ renderWeatherCalendar: function() {
 $('.calendar-day').tooltip({
     track: true,
     position: {
-        my: "left+15 top+15",
-        at: "right bottom",
-        collision: "none" // ОТКЛЮЧАЕТ СЖАТИЕ И АВТОМАТИЧЕСКУЮ ПОДГОНКУ
+        my: "left+15 center",
+        at: "right center",
+        collision: "none"
     },
+    show: false,      // ДОБАВЛЕНО: отключает анимацию появления
+    hide: false,      // ДОБАВЛЕНО: отключает анимацию скрытия
+    appendTo: "body", // КЛЮЧЕВОЕ: tooltip добавляется к body, а не к dialog
     classes: {
         "ui-tooltip": "ui-corner-all ui-widget-shadow calendar-tooltip"
     }
@@ -577,4 +580,5 @@ $('.calendar-day').tooltip({
 	
 
 };
+
 
