@@ -681,4 +681,27 @@ fieldset {
 	.priv-line {
 		padding: 2px;
 		margin: 0;
+
 	}
+
+#header-planting {
+    padding: 5px 10px;
+}
+
+.planting-status-good {
+    color: #4CAF50 !important;
+    font-weight: bold;
+}
+
+.planting-status-bad {
+    color: #F44336 !important;
+}
+
+.planting-status-maybe {
+    color: #FFC107 !important;
+}
+
+.planting-status-winter,
+.planting-status-null {
+    color: #9E9E9E !important;
+}
