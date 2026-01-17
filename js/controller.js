@@ -21,6 +21,9 @@ function NyuLivemapController() {
 		this.privileges = privileges;
 		this.header = Object.create(NyuLivemapHeader).init(this) || null;
 		this.rcon = Object.create(NyuRconInterface).init(this) || null;
+				// Initialize weather calendar
+		this.header.loadPlantingCalendar();
+		this.header.initWeatherCalendar();
 		this.initServerInfo();
 		this.initLivemap();
 		this.run();
@@ -167,6 +170,8 @@ function NyuLivemapController() {
 			self.hasPrivilege('road_layer')   && livemap.getLayer('pavedTiles').addControl("images/control/pavedtiles.png", Locale.ui[109]);
 			self.hasPrivilege('struct_layer') && livemap.getLayer('buildings').addControl("images/control/buildings.png", Locale.ui[110]);
 			self.hasPrivilege('trees_layer')  && livemap.getLayer('trees').addControl("images/control/trees.png", Locale.ui[118]);
+					// Weather Calendar Button
+		livemap.addControl("images/header/time.png", "Календарь погоды", function() { self.header.openWeatherCalendar(); });
 			
 		} );
 		
@@ -381,4 +386,5 @@ Number.prototype.pad = function(size) {
 	var s = String(this);
 	while (s.length < (size || 2)) {s = "0" + s;}
 	return s;
+
 }
