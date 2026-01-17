@@ -500,7 +500,28 @@ renderWeatherCalendar: function() {
         var tooltipText = day + ' ' + monthNamesGen[month-1] + ' ' + year + '\n';
         tooltipText += (weatherNames[info.weather] || 'Неизвестно') + '\n';
         tooltipText += (statusNames[displayStatus] || statusNames['null']);
-        
+
+// ДОБАВЛЯЕМ ПРОГНОЗ УРОЖАЯ для статуса "good"
+if(info.status === 'good') {
+    var forecast = self.calculateHarvestCycles(month, day, year);
+    if(forecast.harvestDate) {
+        tooltipText += '\n\n--- Прогноз урожая ---';
+        tooltipText += '\nСозреет: ' + forecast.harvestDate.day + ' ' + 
+                       monthNamesGen[forecast.harvestDate.month - 1] + ' ' + 
+                       forecast.harvestDate.year;
+    }
+    if(forecast.rotDate) {
+        tooltipText += '\nСгниёт: ' + forecast.rotDate.day + ' ' + 
+                       monthNamesGen[forecast.rotDate.month - 1] + ' ' + 
+                       forecast.rotDate.year;
+    }
+    if(!forecast.harvestDate) {
+        tooltipText += '\n\nПрогноз недоступен (недостаточно данных)';
+    }
+}
+
+		
+		
         var isCurrentDay = (self.weatherCalendar.currentYear === year && 
                             self.weatherCalendar.currentMonth === month && 
                             self.weatherCalendar.currentDay === day);
@@ -561,6 +582,87 @@ $('.calendar-day').tooltip({
 },
 
 
+// Функция расчёта циклов созревания урожая
+calculateHarvestCycles: function(startMonth, startDay, startYear) {
+    var self = this;
+    var cycles = 0;
+    var harvestDate = null;
+    var rotDate = null;
+    
+    var currentMonth = startMonth;
+    var currentDay = startDay;
+    var currentYear = startYear;
+    var previousWeather = null;
+    
+    // Получаем начальную погоду
+    var startInfo = self.getPlantingStatus(startMonth, startDay);
+    if(startInfo && startInfo.weather) {
+        var weatherMap = {'fair': 'sunny', 'snowy': 'snowy', 'cloudy': 'cloudy', 'shower': 'rainy'};
+        previousWeather = weatherMap[startInfo.weather] || startInfo.weather;
+    }
+    
+    var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    
+    // Проходим по дням, считая циклы
+    for(var dayCount = 1; dayCount < 365 && cycles < 12; dayCount++) {
+        currentDay++;
+        if(currentDay > daysInMonth[currentMonth - 1]) {
+            currentDay = 1;
+            currentMonth++;
+            if(currentMonth > 12) {
+                currentMonth = 1;
+                currentYear++;
+            }
+        }
+        
+        // Корректировка для високосного года
+        var adjustedMonth = currentMonth;
+        var adjustedDay = currentDay;
+        if (currentYear % 4 === 0 && currentMonth > 2) {
+            adjustedDay = currentDay + 1;
+            if (adjustedDay < 1) {
+                adjustedMonth = currentMonth - 1;
+                adjustedDay = daysInMonth[adjustedMonth - 1];
+            }
+        }
+        
+        var info = self.getPlantingStatus(adjustedMonth, adjustedDay);
+        if(!info || !info.weather) continue;
+        
+        var weatherMap = {'fair': 'sunny', 'snowy': 'snowy', 'cloudy': 'cloudy', 'shower': 'rainy'};
+        var currentWeather = weatherMap[info.weather] || info.weather;
+        
+        // Проверка цикла: смена НА sunny или С sunny
+        var isSunny = (currentWeather === 'sunny');
+        var wasSunny = (previousWeather === 'sunny');
+        
+        if(previousWeather && ((isSunny && !wasSunny) || (!isSunny && wasSunny))) {
+            cycles++;
+            
+            // 8 циклов = созревание
+            if(cycles === 8) {
+                harvestDate = {day: currentDay, month: currentMonth, year: currentYear};
+            }
+            
+            // 11 циклов = последний день сбора (8 рост + 3 на сбор)
+            // 12 циклов = гниение
+            if(cycles === 12) {
+                rotDate = {day: currentDay, month: currentMonth, year: currentYear};
+                break;
+            }
+        }
+        
+        previousWeather = currentWeather;
+    }
+    
+    return {
+        harvestDate: harvestDate,
+        rotDate: rotDate,
+        cycles: cycles
+    };
+},
+
+	
 		
 	openWeatherCalendar: function() {
 		var self = this;
@@ -580,5 +682,6 @@ $('.calendar-day').tooltip({
 	
 
 };
+
 
 
