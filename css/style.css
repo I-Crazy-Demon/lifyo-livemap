@@ -683,11 +683,11 @@ fieldset {
 		margin: 0;
 
 	}
-
+/*
 #header-planting {
     padding: 5px 10px;
 }
-
+*/
 .planting-status-good {
     color: #4CAF50 !important;
     font-weight: bold;
@@ -830,6 +830,7 @@ fieldset {
 .current-day .day-number {
     color: #ffff00 !important;
 }
+
 
 
 
