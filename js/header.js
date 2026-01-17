@@ -497,9 +497,9 @@ renderWeatherCalendar: function() {
         }
         
         // Формируем tooltip
-        var tooltipText = day + ' ' + monthNamesGen[month-1] + ' ' + year + '\n\n';
-        tooltipText += 'Погода: ' + (weatherNames[info.weather] || 'Неизвестно') + '\n\n';
-        tooltipText += 'Статус: ' + (statusNames[displayStatus] || statusNames['null']);
+        var tooltipText = day + ' ' + monthNamesGen[month-1] + ' ' + year + '\n';
+        tooltipText += (weatherNames[info.weather] || 'Неизвестно') + '\n';
+        tooltipText += (statusNames[displayStatus] || statusNames['null']);
         
         var isCurrentDay = (self.weatherCalendar.currentYear === year && 
                             self.weatherCalendar.currentMonth === month && 
@@ -572,18 +572,3 @@ renderWeatherCalendar: function() {
 	
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
