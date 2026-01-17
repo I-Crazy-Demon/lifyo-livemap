@@ -705,3 +705,9 @@ fieldset {
 .planting-status-null {
     color: #9E9E9E !important;
 }
+
+/* Скрыть текст статуса посадок, показывать только в tooltip */
+#planting-status {
+    display: none;
+}
+
