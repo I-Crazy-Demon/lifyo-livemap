@@ -550,7 +550,7 @@ renderWeatherCalendar: function() {
             "ui-tooltip": "ui-corner-all ui-widget-shadow calendar-tooltip"
         }
     });
-}
+},
 
 
 		
@@ -572,6 +572,7 @@ renderWeatherCalendar: function() {
 	
 
 };
+
 
 
 
