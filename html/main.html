@@ -82,6 +82,13 @@
 			<span id="weather-now">{weather_now}</span>
 			<span class="hint">{ui_5}: <span id="weather-tomorrow">{weather_tomorrow}</span></span>
 		</div>
+		{IF:PRIV_weather_now}
+<div class="header-item" id="header-planting">
+    <img class="header-item-icon" id="h-planting-icon" src="images/icons/plant_good.png">
+    <span id="planting-status">Загрузка...</span>
+</div>
+{ENDIF:PRIV_weather_now}
+
 		{ENDIF:PRIV_weather_now}
 		<div class="header-item" id="header-restarts">
 			<img class="header-item-icon" src="images/header/restart.png">
@@ -236,3 +243,4 @@
 
 </body>
 </html>
+
