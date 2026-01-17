@@ -422,110 +422,136 @@ setPlantingStatus: function(date) {
 	},
 
 		
-	renderWeatherCalendar: function() {
-		var self = this;
-		var month = self.weatherCalendar.month;
-		var year = self.weatherCalendar.year;
-		
-		// Month names
-		var monthNames = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
-		$('#calendar-month-year').text(monthNames[month-1] + ' ' + year);
-		
-		// Get days in month (considering leap year)
-		var daysInMonth = [31, (year % 4 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-		var numDays = daysInMonth[month-1];
-		
-		// Generate calendar HTML
-		var html = '<table class="weather-calendar-table">';
-		html += '<thead><tr>';
-		var dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-		dayNames.forEach(function(day) {
-			html += '<th>' + day + '</th>';
-		});
-		html += '</tr></thead><tbody><tr>';
-		
-		// Calculate first day of month (1 = Monday)
-		// Simple algorithm for first day
-		var firstDay = 1; // Placeholder, will be calculated
-		
-		// Add empty cells for days before month starts
-		for(var i = 0; i < firstDay - 1; i++) {
-			html += '<td></td>';
-		}
-		
-// Add days of month
-var dayOfWeek = firstDay;
-for(var day = 1; day <= numDays; day++) {
-    var info = self.getPlantingStatus(month, day);
+renderWeatherCalendar: function() {
+    var self = this;
+    var month = self.weatherCalendar.month;
+    var year = self.weatherCalendar.year;
     
-    // Map weather values to available icons
-    var weatherMap = {'fair': 'sunny', 'snowy': 'snowy', 'cloudy': 'cloudy', 'shower': 'rainy'};
+    var monthNames = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 
+                      'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+    var monthNamesGen = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
+                         'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+    $('#calendar-month-year').text(monthNames[month-1] + ' ' + year);
     
-    // ИСПРАВЛЕНИЕ ВИСОКОСНОГО ГОДА:
-    // calendar.json создан для невисокосного года (365 дней)
-    // В високосном году после февраля нужно запрашивать данные на день раньше
-    var adjustedMonth = month;
-    var adjustedDay = day;
+    var daysInMonth = [31, (year % 4 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var numDays = daysInMonth[month-1];
     
-    if (year % 4 === 0 && month > 2) {
-        // Високосный год, после февраля - сдвигаем на день назад
-        adjustedDay = day + 1;
-        if (adjustedDay < 1) {
-            adjustedMonth = month - 1;
-            var prevMonthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            adjustedDay = prevMonthDays[adjustedMonth - 1];
+    // Маппинги для русских названий
+    var weatherNames = {
+        'sunny': 'Солнечно',
+        'cloudy': 'Облачно',
+        'rainy': 'Дождь',
+        'snowy': 'Снег'
+    };
+    
+    var statusNames = {
+        'good': 'Благоприятный день для посадок',
+        'bad': 'Неблагоприятный день для посадок',
+        'maybe': 'Спорный день для посадок',
+        'winter': 'Зимний период',
+        'null': 'День не определён'
+    };
+    
+    var html = '<table class="weather-calendar-table"><thead><tr>';
+    var dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    dayNames.forEach(function(day) {
+        html += '<th>' + day + '</th>';
+    });
+    html += '</tr></thead><tbody><tr>';
+    
+    var firstDay = 1;
+    
+    for(var i = 0; i < firstDay - 1; i++) {
+        html += '<td></td>';
+    }
+    
+    var dayOfWeek = firstDay;
+    for(var day = 1; day <= numDays; day++) {
+        // Исправление високосного года
+        var adjustedMonth = month;
+        var adjustedDay = day;
+        
+        if (year % 4 === 0 && month > 2) {
+            adjustedDay = day + 1;
+            if (adjustedDay < 1) {
+                adjustedMonth = month - 1;
+                var prevMonthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                adjustedDay = prevMonthDays[adjustedMonth - 1];
+            }
         }
+        
+        var info = self.getPlantingStatus(adjustedMonth, adjustedDay);
+        if(!info) info = {status: 'null', weather: 'fair'};
+        
+        // Weather mapping
+        var weatherMap = {'fair': 'sunny', 'snowy': 'snowy', 'cloudy': 'cloudy', 'shower': 'rainy'};
+        if(info.weather && weatherMap[info.weather]) {
+            info.weather = weatherMap[info.weather];
+        }
+        
+        // Определяем статус для зимних месяцев
+        var isWinterMonth = (month === 12 || month === 1 || month === 2);
+        var displayStatus = info.status;
+        if(info.status === 'null' && isWinterMonth) {
+            displayStatus = 'winter';
+        }
+        
+        // Формируем tooltip
+        var tooltipText = day + ' ' + monthNamesGen[month-1] + ' ' + year + '\n';
+        tooltipText += 'Погода: ' + (weatherNames[info.weather] || 'Неизвестно') + '\n';
+        tooltipText += 'Статус: ' + (statusNames[displayStatus] || statusNames['null']);
+        
+        var isCurrentDay = (self.weatherCalendar.currentYear === year && 
+                            self.weatherCalendar.currentMonth === month && 
+                            self.weatherCalendar.currentDay === day);
+        
+        html += '<td class="calendar-day' + (isCurrentDay ? ' current-day' : '') + 
+                '" title="' + tooltipText + '">';
+        html += '<div class="day-number">' + day + '</div>';
+        html += '<div class="day-icons">';
+        
+        // Weather icon
+        if(self.plantingCalendar && self.plantingCalendar.meta.icons.weather[info.weather]) {
+            html += '<img src="' + self.plantingCalendar.meta.icons.weather[info.weather] + 
+                    '" alt="' + info.weather + '" class="weather-icon-small">';
+        }
+        
+        // Status icon
+        if(displayStatus === 'winter' && 
+           self.plantingCalendar && self.plantingCalendar.meta.icons.status['winter']) {
+            html += '<img src="' + self.plantingCalendar.meta.icons.status['winter'] + 
+                    '" alt="winter" class="planting-icon-small">';
+        } else if(info.status !== 'null' && self.plantingCalendar && 
+                  self.plantingCalendar.meta.icons.status[info.status]) {
+            html += '<img src="' + self.plantingCalendar.meta.icons.status[info.status] + 
+                    '" alt="' + info.status + '" class="planting-icon-small">';
+        }
+        
+        html += '</div></td>';
+        
+        if(dayOfWeek % 7 === 0 && day < numDays) {
+            html += '</tr><tr>';
+        }
+        dayOfWeek++;
     }
     
-    var info = self.getPlantingStatus(adjustedMonth, adjustedDay);
-    if(!info) info = {status: 'null', weather: 'fair'};
-    
-    if(info.weather && weatherMap[info.weather]) {
-        info.weather = weatherMap[info.weather];
+    while(dayOfWeek % 7 !== 1) {
+        html += '<td></td>';
+        dayOfWeek++;
     }
     
-    // Определяем, является ли день текущим
-    var isCurrentDay = (self.weatherCalendar.currentYear === year && 
-                        self.weatherCalendar.currentMonth === month && 
-                        self.weatherCalendar.currentDay === day);
+    html += '</tr></tbody></table>';
+    $('#calendar-body').html(html);
     
-    html += '<td class="calendar-day' + (isCurrentDay ? ' current-day' : '') + '">';
-    html += '<div class="day-number">' + day + '</div>';
-    html += '<div class="day-icons">';
-    
-    // Add weather icon
-    if(self.plantingCalendar && self.plantingCalendar.meta.icons.weather[info.weather]) {
-        html += '<img src="' + self.plantingCalendar.meta.icons.weather[info.weather] + '" alt="' + info.weather + '" class="weather-icon-small">';
-    }
-    
-    // Add status icon - ИСПРАВЛЕНИЕ ДЛЯ ЗИМЫ
-    // Для зимних месяцев (12, 1, 2) с status: null показываем winter иконку
-    var isWinterMonth = (month === 11 || month === 12 || month === 1 || month === 2);
-    if(info.status === 'null' && isWinterMonth && self.plantingCalendar && self.plantingCalendar.meta.icons.status['winter']) {
-        html += '<img src="' + self.plantingCalendar.meta.icons.status['winter'] + '" alt="winter" class="planting-icon-small">';
-    } else if(info.status !== 'null' && self.plantingCalendar && self.plantingCalendar.meta.icons.status[info.status]) {
-        html += '<img src="' + self.plantingCalendar.meta.icons.status[info.status] + '" alt="' + info.status + '" class="planting-icon-small">';
-    }
-    
-    html += '</div>';
-    html += '</td>';
-    
-    // New row after Sunday
-    if(dayOfWeek % 7 === 0 && day < numDays) {
-        html += '</tr><tr>';
-    }
-    dayOfWeek++;
+    // Инициализация tooltips для ячеек календаря
+    $('.calendar-day').tooltip({
+        track: true,
+        classes: {
+            "ui-tooltip": "ui-corner-all ui-widget-shadow calendar-tooltip"
+        }
+    });
 }
 
-		// Fill remaining cells
-		while(dayOfWeek % 7 !== 1) {
-			html += '<td></td>';
-			dayOfWeek++;
-		}
-		
-		html += '</tr></tbody></table>';
-		$('#calendar-body').html(html);
-	},
 
 		
 	openWeatherCalendar: function() {
@@ -546,6 +572,7 @@ for(var day = 1; day <= numDays; day++) {
 	
 
 };
+
 
 
 
