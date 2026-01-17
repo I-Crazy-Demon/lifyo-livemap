@@ -543,13 +543,18 @@ renderWeatherCalendar: function() {
     html += '</tr></tbody></table>';
     $('#calendar-body').html(html);
     
-    // Инициализация tooltips для ячеек календаря
-    $('.calendar-day').tooltip({
-        track: true,
-        classes: {
-            "ui-tooltip": "ui-corner-all ui-widget-shadow calendar-tooltip"
-        }
-    });
+// Инициализация tooltips для ячеек календаря
+$('.calendar-day').tooltip({
+    track: true,
+    position: {
+        my: "left+15 top+15",
+        at: "right bottom",
+        collision: "none" // ОТКЛЮЧАЕТ СЖАТИЕ И АВТОМАТИЧЕСКУЮ ПОДГОНКУ
+    },
+    classes: {
+        "ui-tooltip": "ui-corner-all ui-widget-shadow calendar-tooltip"
+    }
+});
 },
 
 
@@ -572,3 +577,4 @@ renderWeatherCalendar: function() {
 	
 
 };
+
