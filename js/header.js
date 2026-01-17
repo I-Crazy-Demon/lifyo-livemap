@@ -472,7 +472,7 @@ renderWeatherCalendar: function() {
         var adjustedDay = day;
         
         if (year % 4 === 0 && month > 2) {
-            adjustedDay = day - 1;
+            adjustedDay = day + 1;
             if (adjustedDay < 1) {
                 adjustedMonth = month - 1;
                 var prevMonthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -496,17 +496,17 @@ renderWeatherCalendar: function() {
             displayStatus = 'winter';
         }
         
-        // Формируем tooltip с HTML переносами
-        var tooltipHtml = '<strong>' + day + ' ' + monthNamesGen[month-1] + ' ' + year + '</strong><br>';
-        tooltipHtml += '<strong>Погода:</strong> ' + (weatherNames[info.weather] || 'Неизвестно') + '<br>';
-        tooltipHtml += '<strong>Статус:</strong> ' + (statusNames[displayStatus] || statusNames['null']);
+        // Формируем tooltip
+        var tooltipText = day + ' ' + monthNamesGen[month-1] + ' ' + year + '\n\n';
+        tooltipText += 'Погода: ' + (weatherNames[info.weather] || 'Неизвестно') + '\n\n';
+        tooltipText += 'Статус: ' + (statusNames[displayStatus] || statusNames['null']);
         
         var isCurrentDay = (self.weatherCalendar.currentYear === year && 
                             self.weatherCalendar.currentMonth === month && 
                             self.weatherCalendar.currentDay === day);
         
         html += '<td class="calendar-day' + (isCurrentDay ? ' current-day' : '') + 
-                '" data-tooltip="' + tooltipHtml.replace(/"/g, '&quot;') + '">';
+                '" title="' + tooltipText + '">';
         html += '<div class="day-number">' + day + '</div>';
         html += '<div class="day-icons">';
         
@@ -543,11 +543,8 @@ renderWeatherCalendar: function() {
     html += '</tr></tbody></table>';
     $('#calendar-body').html(html);
     
-    // Инициализация tooltips для ячеек календаря с HTML контентом
+    // Инициализация tooltips для ячеек календаря
     $('.calendar-day').tooltip({
-        content: function() {
-            return $(this).attr('data-tooltip');
-        },
         track: true,
         classes: {
             "ui-tooltip": "ui-corner-all ui-widget-shadow calendar-tooltip"
@@ -575,6 +572,7 @@ renderWeatherCalendar: function() {
 	
 
 };
+
 
 
 
