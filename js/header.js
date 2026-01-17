@@ -304,9 +304,14 @@ setPlantingStatus: function(date) {
 						var datestring = time.getUTCDate() + '/' + (time.getUTCMonth()+1);
 						// Generate icon and label
 						var iconstring = "<img src=\"images/weather/" + winfo[j].key + ".png\">";
+						                    // Получить статус посадок для этого дня
+                    var plantingStatus = this.getPlantingStatus(time.getUTCMonth() + 1, time.getUTCDate());
+                    var plantingIcon = '';
+                    if (plantingStatus && plantingStatus.status && this.plantingCalendar.meta.icons.status[plantingStatus.status]) {
+                        plantingIcon = "<img src=\"" + this.plantingCalendar.meta.icons.status[plantingStatus.status] + "\" class=\"planting-icon-small\">";
+                    }
 						// Create wrapper and append elements
-						content += "<div class=\"weather-item\">" + datestring + "<br>" + iconstring + "<br>" + winfo[j].weather + "</div>";
-						break;
+                    content += "<div class=\"weather-item\">" + datestring + "<br>" + iconstring + plantingIcon + "<br>" + winfo[j].weather + "</div>";						break;
 					}
 				}
 			}
@@ -382,5 +387,6 @@ setPlantingStatus: function(date) {
 	
 
 };
+
 
 
