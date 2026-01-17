@@ -384,9 +384,129 @@ setPlantingStatus: function(date) {
 		this.jhItem.addClass("has-tooltip").tooltip( "option", { content: content, disabled: false } );
 		return this;
 	},
+
+		// Weather Calendar
+	weatherCalendar: {year: 1060, month: 1},
+	
+	initWeatherCalendar: function() {
+		var self = this;
+		// Initialize dialog
+		self.weatherCalendarDialog = $('#dialog-weather-calendar').dialog({
+			autoOpen: false,
+			modal: true,
+			width: 700,
+			height: 'auto',
+			buttons: [
+				{ text: 'Закрыть', click: function() { $(this).dialog('close'); } }
+			]
+		});
+		
+		// Navigation buttons
+		$('#calendar-prev-month').on('click', function() {
+			self.weatherCalendar.month--;
+			if(self.weatherCalendar.month < 1) {
+				self.weatherCalendar.month = 12;
+				self.weatherCalendar.year--;
+			}
+			self.renderWeatherCalendar();
+		});
+		
+		$('#calendar-next-month').on('click', function() {
+			self.weatherCalendar.month++;
+			if(self.weatherCalendar.month > 12) {
+				self.weatherCalendar.month = 1;
+				self.weatherCalendar.year++;
+			}
+			self.renderWeatherCalendar();
+		});
+	},
+
+		
+	renderWeatherCalendar: function() {
+		var self = this;
+		var month = self.weatherCalendar.month;
+		var year = self.weatherCalendar.year;
+		
+		// Month names
+		var monthNames = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+		$('#calendar-month-year').text(monthNames[month-1] + ' ' + year);
+		
+		// Get days in month (considering leap year)
+		var daysInMonth = [31, (year % 4 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+		var numDays = daysInMonth[month-1];
+		
+		// Generate calendar HTML
+		var html = '<table class="weather-calendar-table">';
+		html += '<thead><tr>';
+		var dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+		dayNames.forEach(function(day) {
+			html += '<th>' + day + '</th>';
+		});
+		html += '</tr></thead><tbody><tr>';
+		
+		// Calculate first day of month (1 = Monday)
+		// Simple algorithm for first day
+		var firstDay = 1; // Placeholder, will be calculated
+		
+		// Add empty cells for days before month starts
+		for(var i = 0; i < firstDay - 1; i++) {
+			html += '<td></td>';
+		}
+		
+		// Add days of month
+		var dayOfWeek = firstDay;
+		for(var day = 1; day <= numDays; day++) {
+			var info = self.getPlantingStatus(month, day);
+			if(!info) info = {status: 'null', weather: 'fair'};
+			
+			html += '<td class="calendar-day">';
+			html += '<div class="day-number">' + day + '</div>';
+			html += '<div class="day-icons">';
+			
+			// Add weather icon
+			if(self.plantingCalendar && self.plantingCalendar.meta.icons.weather[info.weather]) {
+				html += '<img src="' + self.plantingCalendar.meta.icons.weather[info.weather] + '" class="planting-icon-small" title="' + info.weather + '">';
+			}
+			
+			// Add status icon
+			if(info.status !== 'null' && self.plantingCalendar && self.plantingCalendar.meta.icons.status[info.status]) {
+				html += '<img src="' + self.plantingCalendar.meta.icons.status[info.status] + '" class="planting-icon-small" title="' + info.status + '">';
+			}
+			
+			html += '</div></td>';
+			
+			// New row after Sunday
+			if(dayOfWeek % 7 === 0 && day < numDays) {
+				html += '</tr><tr>';
+			}
+			dayOfWeek++;
+		}
+		
+		// Fill remaining cells
+		while(dayOfWeek % 7 !== 1) {
+			html += '<td></td>';
+			dayOfWeek++;
+		}
+		
+		html += '</tr></tbody></table>';
+		$('#calendar-body').html(html);
+	},
+
+		
+	openWeatherCalendar: function() {
+		var self = this;
+		// Set to current game date if available
+		if(self.gameTime && self.gameTime.month) {
+			self.weatherCalendar.month = parseInt(self.gameTime.month);
+			self.weatherCalendar.year = parseInt(self.gameTime.year) || 1060;
+		}
+		self.renderWeatherCalendar();
+		self.weatherCalendarDialog.dialog('open');
+	}
 	
 
 };
+
 
 
 
